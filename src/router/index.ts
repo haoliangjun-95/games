@@ -20,6 +20,11 @@ const router = createRouter({
       component: () => import('../games/gomoku/index.vue'),
     },
     {
+      path: '/game/go',
+      name: 'go',
+      component: () => import('../games/go/index.vue'),
+    },
+    {
       path: '/game/idiom',
       name: 'idiom',
       component: () => import('../games/idiom/index.vue'),

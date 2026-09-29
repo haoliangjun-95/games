@@ -16,7 +16,7 @@ function enter(id: string) {
     <header class="home__hero">
       <div class="home__logo">🧠</div>
       <h1 class="home__title">智益游戏中心</h1>
-      <p class="home__slogan">8 款益智小游戏 · 离线可玩 · 边玩边学</p>
+      <p class="home__slogan">{{ games.length }} 款益智小游戏 · 离线可玩 · 边玩边学</p>
     </header>
 
     <main class="home__grid">

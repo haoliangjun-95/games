@@ -30,6 +30,14 @@ export const games: GameMeta[] = [
     tip: '支持人机对战（三档难度）和双人对战',
   },
   {
+    id: 'go',
+    name: '围棋',
+    description: '黑白纵横，围地称雄',
+    icon: '⚪',
+    gradient: 'linear-gradient(135deg, #b45309 0%, #78350f 100%)',
+    tip: '9/13/19 路，人机与双人，终局自动数子',
+  },
+  {
     id: 'idiom',
     name: '成语接龙',
     description: '妙语连珠，出口成章',
