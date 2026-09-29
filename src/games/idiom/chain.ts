@@ -51,6 +51,53 @@ export class IdiomChain {
     return this.charPlain.get(ch)
   }
 
+  /** 以指定字开头的成语（供填字关卡生成接龙序列） */
+  startingWith(ch: string): IdiomEntry[] {
+    return this.byFirstChar.get(ch) ?? []
+  }
+
+  /**
+   * 生成精确同字接龙序列：每条首字 = 上一条尾字，成语不重复。
+   * 内部随机尝试，失败返回 null。
+   */
+  chainSequence(count: number, rng: () => number = Math.random, exclude?: Set<string>): IdiomEntry[] | null {
+    const used = new Set<string>(exclude ?? [])
+    const pickFrom = (ch: string): IdiomEntry | null => {
+      const pool = this.startingWith(ch).filter((e) => !used.has(e.word))
+      if (pool.length === 0) return null
+      return pool[Math.floor(rng() * pool.length)]!
+    }
+    for (let attempt = 0; attempt < 60; attempt++) {
+      // 随机起点：优先选择尾字"出路多"的成语，降低断链概率
+      let start: IdiomEntry | null = null
+      for (let i = 0; i < 40; i++) {
+        const cand = this.randomEntry(rng, used)
+        const tail = cand.word[3]!
+        if (this.startingWith(tail).filter((e) => !used.has(e.word)).length >= count) {
+          start = cand
+          break
+        }
+      }
+      if (!start) continue
+      const seq: IdiomEntry[] = [start]
+      const localUsed = new Set(used)
+      localUsed.add(start.word)
+      let ok = true
+      for (let k = 1; k < count; k++) {
+        const tail = seq[seq.length - 1]!.word[3]!
+        const next = pickFrom(tail)
+        if (!next || localUsed.has(next.word)) {
+          ok = false
+          break
+        }
+        localUsed.add(next.word)
+        seq.push(next)
+      }
+      if (ok && seq.length === count) return seq
+    }
+    return null
+  }
+
   /** word 能否接在 lastWord 之后 */
   canChain(lastWord: string, word: string, homophone: boolean): boolean {
     const lastChar = lastWord[lastWord.length - 1]!
