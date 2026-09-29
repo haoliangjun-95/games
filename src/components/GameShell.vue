@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import { computed } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { isMuted, toggleMute, sounds } from '../composables/useSound'
+import { tutorialKeyForGameName, tutorialForGameName } from '../games/tutorials'
+import GameTutorial from './GameTutorial.vue'
 
 const props = defineProps<{
   title: string
@@ -11,6 +13,26 @@ const props = defineProps<{
 
 const router = useRouter()
 const muted = computed(() => isMuted())
+
+// ===== 新手教程 =====
+const tutorialKey = computed(() => tutorialKeyForGameName(props.title))
+const tutorialSteps = computed(() => tutorialForGameName(props.title))
+const showTutorial = ref(false)
+
+onMounted(() => {
+  // 每个游戏首次进入自动弹一次教程（可随时通过 ❓ 按钮再看）
+  if (tutorialKey.value && tutorialSteps.value) {
+    const seenKey = `pg.tutorial.seen.${tutorialKey.value}`
+    if (!localStorage.getItem(seenKey)) {
+      showTutorial.value = true
+    }
+  }
+})
+
+function closeTutorial() {
+  if (tutorialKey.value) localStorage.setItem(`pg.tutorial.seen.${tutorialKey.value}`, '1')
+  showTutorial.value = false
+}
 
 function back() {
   sounds.click()
@@ -32,6 +54,7 @@ function onToggleMute() {
         <span v-if="props.subtitle" class="shell__subtitle">{{ props.subtitle }}</span>
       </div>
       <div class="shell__actions">
+        <button v-if="tutorialSteps" class="btn btn-ghost btn-sm" @click="showTutorial = true">❓ 玩法</button>
         <button
           class="btn btn-ghost btn-sm"
           :title="muted ? '开启声音' : '关闭声音'"
@@ -45,6 +68,13 @@ function onToggleMute() {
     <main class="shell__body">
       <slot />
     </main>
+
+    <GameTutorial
+      :visible="showTutorial"
+      :game-name="props.title"
+      :steps="tutorialSteps ?? []"
+      @close="closeTutorial"
+    />
   </div>
 </template>
 

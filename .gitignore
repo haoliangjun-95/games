@@ -4,6 +4,7 @@ dist-offline
 release
 data-raw
 .zcode
+.idea
 *.tsbuildinfo
 .DS_Store
 *.local
