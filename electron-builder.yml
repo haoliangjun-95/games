@@ -1,0 +1,22 @@
+appId: com.haoliang.puzzle-games-hub
+productName: 智益游戏中心
+directories:
+  output: release
+files:
+  - electron/**
+  - dist-offline/**
+  - package.json
+asar: true
+win:
+  icon: build/icon.png
+  target:
+    - nsis
+    - portable
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  shortcutName: 智益游戏中心
+  artifactName: 智益游戏中心-安装包-${version}.${ext}
+portable:
+  artifactName: 智益游戏中心-绿色版-${version}.${ext}

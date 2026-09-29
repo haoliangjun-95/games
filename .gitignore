@@ -1,0 +1,9 @@
+node_modules
+dist
+dist-offline
+release
+data-raw
+.zcode
+*.tsbuildinfo
+.DS_Store
+*.local
